@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import {
   Table,
@@ -15,13 +15,26 @@ import { Copy, Edit, Eye, Trash2, ExternalLink } from 'lucide-react'
 import { useEntries, useSearchWebsite, useSearchEmail } from '@/hooks/useEntries'
 import { formatDistanceToNow } from 'date-fns'
 import { copyToClipboard } from '@/lib/clipboard'
+import Pagination from '@/components/shared/Pagination'
+import CreateEntryModal from '@/components/entries/CreateEntryModal'
+import EditEntryModal from '@/components/entries/EditEntryModal'
+import RevealPasswordModal from '@/components/entries/RevealPasswordModal'
+import DeleteConfirmDialog from '@/components/entries/DeleteConfirmDialog'
 import type { PasswordEntry } from '@/types'
 
 export default function DashboardPage() {
   const [page, setPage] = useState(1)
-  const [pageSize] = useState(50)
+  const [pageSize, setPageSize] = useState(50)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchType, setSearchType] = useState<'website' | 'email'>('website')
+  
+  // Modal states
+  const [createModalOpen, setCreateModalOpen] = useState(false)
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [revealModalOpen, setRevealModalOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
+  const [selectedEntry, setSelectedEntry] = useState<PasswordEntry | null>(null)
 
   // Determine which query to use based on search state
   const entriesQuery = useEntries(page, pageSize)
@@ -42,8 +55,7 @@ export default function DashboardPage() {
   }
 
   const handleNewPassword = () => {
-    // TODO: Open create modal
-    console.log('Create new password')
+    setCreateModalOpen(true)
   }
 
   const handleCopyUsername = (username: string) => {
@@ -51,19 +63,70 @@ export default function DashboardPage() {
   }
 
   const handleReveal = (entryId: string) => {
-    // TODO: Open reveal modal
-    console.log('Reveal password:', entryId)
+    setSelectedEntryId(entryId)
+    setRevealModalOpen(true)
   }
 
   const handleEdit = (entry: PasswordEntry) => {
-    // TODO: Open edit modal
-    console.log('Edit entry:', entry)
+    setSelectedEntry(entry)
+    setSelectedEntryId(entry.entry_id)
+    setEditModalOpen(true)
   }
 
-  const handleDelete = (entryId: string) => {
-    // TODO: Open delete confirmation
-    console.log('Delete entry:', entryId)
+  const handleDelete = (entry: PasswordEntry) => {
+    setSelectedEntry(entry)
+    setSelectedEntryId(entry.entry_id)
+    setDeleteDialogOpen(true)
   }
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+  }
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize)
+    setPage(1) // Reset to first page when changing page size
+  }
+
+  const getPasswordStrengthColor = (strength?: string) => {
+    if (!strength) return 'bg-gray-100 text-gray-800'
+    switch (strength.toLowerCase()) {
+      case 'very strong':
+        return 'bg-green-100 text-green-800'
+      case 'strong':
+        return 'bg-lime-100 text-lime-800'
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'weak':
+        return 'bg-orange-100 text-orange-800'
+      case 'very weak':
+        return 'bg-red-100 text-red-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + K - Focus search (handled by SearchBar)
+      // Ctrl/Cmd + N - New entry
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault()
+        setCreateModalOpen(true)
+      }
+      // Escape - Close modals
+      if (e.key === 'Escape') {
+        setCreateModalOpen(false)
+        setEditModalOpen(false)
+        setRevealModalOpen(false)
+        setDeleteDialogOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   return (
     <DashboardLayout
@@ -201,17 +264,8 @@ export default function DashboardPage() {
                     </TableCell>
                     <TableCell>
                       {entry.password_strength ? (
-                        <Badge
-                          variant={
-                            entry.password_strength === 'strong' ||
-                            entry.password_strength === 'very_strong'
-                              ? 'default'
-                              : entry.password_strength === 'medium'
-                              ? 'secondary'
-                              : 'destructive'
-                          }
-                        >
-                          {entry.password_strength}
+                        <Badge className={getPasswordStrengthColor(entry.password_strength)}>
+                          {entry.password_strength.replace('_', ' ')}
                         </Badge>
                       ) : (
                         <span className="text-gray-400">—</span>
@@ -238,7 +292,7 @@ export default function DashboardPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleDelete(entry.entry_id)}
+                          onClick={() => handleDelete(entry)}
                           title="Delete entry"
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
                         >
@@ -255,35 +309,38 @@ export default function DashboardPage() {
 
         {/* Pagination */}
         {activeQuery.data && activeQuery.data.total_pages > 1 && (
-          <div className="flex items-center justify-between bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div className="text-sm text-gray-600">
-              Showing page {activeQuery.data.page} of {activeQuery.data.total_pages} (
-              {activeQuery.data.total} total entries)
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                Previous
-              </Button>
-              <div className="text-sm font-medium">
-                Page {page}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage((p) => p + 1)}
-                disabled={page >= (activeQuery.data?.total_pages || 1)}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={activeQuery.data.page}
+            totalPages={activeQuery.data.total_pages}
+            pageSize={pageSize}
+            totalItems={activeQuery.data.total}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
         )}
       </div>
+
+      {/* Modals */}
+      <CreateEntryModal
+        isOpen={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+      />
+      <EditEntryModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        entryId={selectedEntryId}
+      />
+      <RevealPasswordModal
+        isOpen={revealModalOpen}
+        onClose={() => setRevealModalOpen(false)}
+        entryId={selectedEntryId}
+      />
+      <DeleteConfirmDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        entryId={selectedEntryId}
+        websiteName={selectedEntry?.website_name || null}
+      />
     </DashboardLayout>
   )
 }
