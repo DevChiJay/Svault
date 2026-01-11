@@ -87,11 +87,11 @@ export default function RevealPasswordModal({ isOpen, onClose, entryId }: Reveal
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg bg-white">
-        <DialogHeader>
-          <DialogTitle>
+        <DialogHeader className="bg-gradient-to-r from-primary-50 to-accent-50 -mx-6 -mt-6 px-6 py-4 rounded-t-lg border-b">
+          <DialogTitle className="text-primary-900">
             {revealedData?.website_name || 'Password Details'}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-primary-700">
             View and copy your password securely. This window will auto-hide for security.
           </DialogDescription>
         </DialogHeader>
@@ -104,9 +104,9 @@ export default function RevealPasswordModal({ isOpen, onClose, entryId }: Reveal
         ) : revealedData ? (
           <div className="space-y-4">
             {/* Security Warning */}
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+            <Alert className="bg-yellow-50 border-yellow-200">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-sm text-yellow-800">
                 Make sure no one is watching your screen. Password will auto-hide in {countdown} seconds.
               </AlertDescription>
             </Alert>
@@ -121,13 +121,13 @@ export default function RevealPasswordModal({ isOpen, onClose, entryId }: Reveal
 
             {/* Username/Email */}
             <div className="space-y-2">
-              <label className="text-xs font-medium text-gray-500">Username / Email</label>
+              <label className="text-xs font-medium text-gray-700">Username / Email</label>
               <div className="flex gap-2">
-                <div className="flex-1 bg-gray-50 rounded-md px-3 py-2 text-sm font-medium text-gray-900 break-all">
+                <div className="flex-1 bg-blue-50 border border-blue-200 rounded-md px-3 py-2 text-sm font-medium text-blue-900 break-all">
                   {revealedData.login_email_or_username}
                 </div>
-                <Button variant="outline" size="icon" onClick={handleCopyUsername}>
-                  <Copy className="h-4 w-4" />
+                <Button variant="outline" size="icon" onClick={handleCopyUsername} className="border-blue-300 hover:bg-blue-50">
+                  <Copy className="h-4 w-4 text-blue-600" />
                 </Button>
               </div>
             </div>
@@ -149,15 +149,15 @@ export default function RevealPasswordModal({ isOpen, onClose, entryId }: Reveal
               {passwordVisible ? (
                 <div className="space-y-2">
                   <div className="flex gap-2">
-                    <div className="flex-1 bg-gray-900 rounded-md px-3 py-3 text-lg font-mono text-white break-all">
+                    <div className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-md px-3 py-3 text-lg font-mono text-white break-all shadow-lg">
                       {revealedData.password}
                     </div>
-                    <Button variant="outline" size="icon" onClick={handleCopyPassword}>
-                      <Copy className="h-4 w-4" />
+                    <Button variant="outline" size="icon" onClick={handleCopyPassword} className="border-purple-300 hover:bg-purple-50">
+                      <Copy className="h-4 w-4 text-purple-600" />
                     </Button>
                   </div>
                   {!extended && (
-                    <Button variant="outline" size="sm" onClick={handleExtend} className="w-full">
+                    <Button variant="outline" size="sm" onClick={handleExtend} className="w-full border-purple-300 text-purple-700 hover:bg-purple-50">
                       Keep Password Visible
                     </Button>
                   )}
@@ -168,7 +168,7 @@ export default function RevealPasswordModal({ isOpen, onClose, entryId }: Reveal
                     setPasswordVisible(true)
                     setCountdown(AUTO_HIDE_DURATION)
                   }}
-                  className="w-full"
+                  className="w-full bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white shadow-md"
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   Click to Reveal Password

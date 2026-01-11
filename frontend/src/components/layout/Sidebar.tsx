@@ -1,7 +1,8 @@
-import { Key, X } from 'lucide-react'
+import { Key, X, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
+import { useLogout } from '@/hooks/useAuth'
 
 interface SidebarProps {
   isOpen: boolean
@@ -10,6 +11,11 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onToggle, totalPasswords = 0 }: SidebarProps) {
+  const logout = useLogout()
+
+  const handleLogout = () => {
+    logout()
+  }
   return (
     <>
       {/* Backdrop for mobile */}
@@ -22,13 +28,13 @@ export default function Sidebar({ isOpen, onToggle, totalPasswords = 0 }: Sideba
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 shadow-lg transition-transform duration-300 ${
+        className={`fixed top-0 left-0 z-50 h-full w-72 sm:w-64 bg-white border-r border-gray-200 shadow-lg transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6">
+          <div className="flex items-center justify-between p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <div className="bg-primary-600 rounded-lg p-2">
                 <Key className="h-6 w-6 text-white" />
@@ -51,8 +57,8 @@ export default function Sidebar({ isOpen, onToggle, totalPasswords = 0 }: Sideba
           <Separator />
 
           {/* Navigation */}
-          <nav className="flex-1 p-4">
-            <div className="space-y-1">
+          <nav className="flex-1 p-3 sm:p-4">
+            <div className="space-y-2">
               <button className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors">
                 <span>All Passwords</span>
                 <Badge variant="secondary" className="bg-white/20 text-white border-0">
@@ -60,18 +66,14 @@ export default function Sidebar({ isOpen, onToggle, totalPasswords = 0 }: Sideba
                 </Badge>
               </button>
 
-              <button className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                <span>Favorites</span>
-                <Badge variant="secondary">0</Badge>
-              </button>
+              <Separator className="my-4" />
 
-              <button className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                <span>Recently Used</span>
-              </button>
-
-              <button className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                <span>Trash</span>
-                <Badge variant="secondary">0</Badge>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
               </button>
             </div>
           </nav>
@@ -79,7 +81,7 @@ export default function Sidebar({ isOpen, onToggle, totalPasswords = 0 }: Sideba
           <Separator />
 
           {/* Footer */}
-          <div className="p-4">
+          <div className="p-3 sm:p-4">
             <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-lg p-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-1">
                 Security Score

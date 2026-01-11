@@ -15,7 +15,7 @@ export default function DashboardLayout({
   onSearch,
   totalPasswords 
 }: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false) // Start closed on mobile
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -28,9 +28,7 @@ export default function DashboardLayout({
 
       {/* Main Content */}
       <div
-        className={`transition-all duration-300 ${
-          sidebarOpen ? 'ml-64' : 'ml-0'
-        }`}
+        className={`transition-all duration-300 lg:ml-64`}
       >
         {/* Navbar */}
         <Navbar 
@@ -40,7 +38,7 @@ export default function DashboardLayout({
         />
 
         {/* Page Content */}
-        <main className="p-6">
+        <main className="p-3 sm:p-4 md:p-6">
           {children}
         </main>
       </div>

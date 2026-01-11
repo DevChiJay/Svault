@@ -134,18 +134,18 @@ export default function DashboardPage() {
       onSearch={handleSearch}
       totalPasswords={activeQuery.data?.total || 0}
     >
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <p className="text-gray-600 mt-1">
+            <p className="text-sm sm:text-base text-gray-600">
               {searchQuery
                 ? `Search results for "${searchQuery}"`
                 : `Manage your ${activeQuery.data?.total || 0} password entries`}
             </p>
           </div>
           {searchQuery && (
-            <Button variant="outline" onClick={() => handleSearch('', 'website')}>
+            <Button variant="outline" onClick={() => handleSearch('', 'website')} className="w-full sm:w-auto">
               Clear Search
             </Button>
           )}
@@ -208,39 +208,40 @@ export default function DashboardPage() {
               )}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Website</TableHead>
-                  <TableHead>URL</TableHead>
-                  <TableHead>Username/Email</TableHead>
-                  <TableHead>Last Modified</TableHead>
-                  <TableHead>Strength</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="inline-block min-w-full align-middle">
+                <div className="overflow-hidden border border-gray-200 sm:rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[200px]">Website</TableHead>
+                        <TableHead className="min-w-[180px]">Username/Email</TableHead>
+                        <TableHead className="min-w-[120px]">Last Modified</TableHead>
+                        <TableHead className="text-right min-w-[100px]">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
                 {activeQuery.data.entries.map((entry) => (
                   <TableRow key={entry.entry_id}>
-                    <TableCell className="font-medium">
-                      {entry.website_name}
-                    </TableCell>
                     <TableCell>
-                      {entry.website_url ? (
-                        <a
-                          href={entry.website_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary-600 hover:text-primary-800 inline-flex items-center gap-1"
-                        >
-                          <span className="truncate max-w-[200px]">
-                            {entry.website_url}
-                          </span>
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
+                      <div className="space-y-1">
+                        <div className="font-medium">{entry.website_name}</div>
+                        {entry.website_url ? (
+                          <a
+                            href={entry.website_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary-600 hover:text-primary-800 inline-flex items-center gap-1"
+                          >
+                            <span className="truncate max-w-[150px] sm:max-w-[200px] md:max-w-[300px]">
+                              {entry.website_url}
+                            </span>
+                            <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                          </a>
+                        ) : (
+                          <span className="text-sm text-gray-400">No URL</span>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -261,15 +262,6 @@ export default function DashboardPage() {
                       {formatDistanceToNow(new Date(entry.updated_at), {
                         addSuffix: true,
                       })}
-                    </TableCell>
-                    <TableCell>
-                      {entry.password_strength ? (
-                        <Badge className={getPasswordStrengthColor(entry.password_strength)}>
-                          {entry.password_strength.replace('_', ' ')}
-                        </Badge>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end gap-1">
@@ -302,8 +294,11 @@ export default function DashboardPage() {
                     </TableCell>
                   </TableRow>
                 ))}
-              </TableBody>
-            </Table>
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          </div>
           )}
         </div>
 
