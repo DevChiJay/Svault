@@ -58,18 +58,84 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-accent-50 p-4">
-      <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="space-y-2 text-center">
-          <div className="flex justify-center mb-2">
-            <div className="h-16 w-16 bg-primary-600 rounded-full flex items-center justify-center">
-              <KeyRound className="h-8 w-8 text-white" />
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
+        {/* Left side - Info Section */}
+        <div className="hidden lg:block space-y-8 p-8">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="h-14 w-14 bg-primary-600 rounded-full flex items-center justify-center shadow-lg">
+                <KeyRound className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-gray-900">SecureVault</h1>
+                <p className="text-sm text-gray-600">Your Digital Key Manager</p>
+              </div>
+            </div>
+            <p className="text-xl text-gray-700 leading-relaxed">
+              Secure, simple, and powerful password management for modern life.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                <Lock className="h-6 w-6 text-primary-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Bank-Level Encryption</h3>
+                <p className="text-gray-600 text-sm">
+                  Your passwords are encrypted with AES-256 encryption, the same standard used by banks and military.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                <KeyRound className="h-6 w-6 text-primary-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Secure Password Generator</h3>
+                <p className="text-gray-600 text-sm">
+                  Generate strong, unique passwords for every account with our built-in password generator.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                <svg className="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Zero-Knowledge Architecture</h3>
+                <p className="text-gray-600 text-sm">
+                  We never have access to your master password or unencrypted data. Only you can decrypt your vault.
+                </p>
+              </div>
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold">Password Manager</CardTitle>
-          <CardDescription className="text-base">
-            Sign in to your account to manage your passwords securely
-          </CardDescription>
-        </CardHeader>
+
+          <div className="pt-6 border-t border-gray-200">
+            <p className="text-sm text-gray-500 italic">
+              "The best password is the one you don't have to remember." - Join thousands of users who trust SecureVault.
+            </p>
+          </div>
+        </div>
+
+        {/* Right side - Sign In Form */}
+        <Card className="w-full shadow-xl">
+          <CardHeader className="space-y-2">
+            <div className="flex justify-center lg:hidden mb-2">
+              <div className="h-16 w-16 bg-primary-600 rounded-full flex items-center justify-center">
+                <KeyRound className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <CardTitle className="text-2xl font-bold text-center lg:text-left">Welcome Back</CardTitle>
+            <CardDescription className="text-base text-center lg:text-left">
+              Sign in to access your secure password vault
+            </CardDescription>
+          </CardHeader>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
@@ -158,6 +224,7 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
+      </div>
     </div>
   )
 }

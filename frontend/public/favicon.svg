@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="keyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#keyGradient)"/>
+  
+  <!-- Key shape -->
+  <g fill="white">
+    <!-- Key head (circle) -->
+    <circle cx="35" cy="35" r="12" fill="none" stroke="white" stroke-width="3.5"/>
+    <circle cx="35" cy="35" r="6" fill="white"/>
+    
+    <!-- Key shaft -->
+    <rect x="42" y="32.5" width="28" height="5" rx="1"/>
+    
+    <!-- Key teeth -->
+    <rect x="60" y="37.5" width="4" height="8" rx="0.5"/>
+    <rect x="66" y="37.5" width="4" height="12" rx="0.5"/>
+    
+    <!-- Lock indicator -->
+    <path d="M 55 55 L 55 62 L 48 62 L 48 55" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="51.5" cy="67" r="5" fill="white"/>
+    <rect x="49.5" y="67" width="4" height="8" rx="1"/>
+  </g>
+</svg>
