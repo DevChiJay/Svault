@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import {
@@ -10,7 +11,7 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
+// import { Badge } from '@/components/ui/badge'
 import { Copy, Edit, Eye, Trash2, ExternalLink } from 'lucide-react'
 import { useEntries, useSearchWebsite, useSearchEmail } from '@/hooks/useEntries'
 import { formatDistanceToNow } from 'date-fns'
@@ -88,23 +89,23 @@ export default function DashboardPage() {
     setPage(1) // Reset to first page when changing page size
   }
 
-  const getPasswordStrengthColor = (strength?: string) => {
-    if (!strength) return 'bg-gray-100 text-gray-800'
-    switch (strength.toLowerCase()) {
-      case 'very strong':
-        return 'bg-green-100 text-green-800'
-      case 'strong':
-        return 'bg-lime-100 text-lime-800'
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'weak':
-        return 'bg-orange-100 text-orange-800'
-      case 'very weak':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
+  // const getPasswordStrengthColor = (strength?: string) => {
+  //   if (!strength) return 'bg-gray-100 text-gray-800'
+  //   switch (strength.toLowerCase()) {
+  //     case 'very strong':
+  //       return 'bg-green-100 text-green-800'
+  //     case 'strong':
+  //       return 'bg-lime-100 text-lime-800'
+  //     case 'medium':
+  //       return 'bg-yellow-100 text-yellow-800'
+  //     case 'weak':
+  //       return 'bg-orange-100 text-orange-800'
+  //     case 'very weak':
+  //       return 'bg-red-100 text-red-800'
+  //     default:
+  //       return 'bg-gray-100 text-gray-800'
+  //   }
+  // }
 
   // Keyboard shortcuts
   useEffect(() => {

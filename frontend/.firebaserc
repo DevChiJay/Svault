@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "frontends-f2938"
+  },
+  "targets": {
+    "frontends-f2938": {
+      "hosting": {
+        "PasswordManager": [
+          "pguard"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
