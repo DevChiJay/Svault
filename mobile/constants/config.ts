@@ -7,7 +7,7 @@
 export const API_CONFIG = {
   // Update these values for production
   BASE_URL: __DEV__ 
-    ? 'http://192.168.1.2:8000'  // Development
+    ? 'http://192.168.1.4:8000'  // Development
     : 'https://apihq.store',  // Production
   API_VERSION: '/v1/password-manager',
   TIMEOUT: 30000, // 30 seconds
