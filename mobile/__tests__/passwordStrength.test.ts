@@ -54,27 +54,27 @@ describe('Password Strength Utility', () => {
   describe('getPasswordFeedback', () => {
     it('should suggest adding length for short passwords', () => {
       const feedback = getPasswordFeedback('Abc1!');
-      expect(feedback).toContain('at least 8 characters');
+      expect(feedback).toContain('Use at least 8 characters');
     });
 
     it('should suggest adding uppercase for lowercase-only passwords', () => {
       const feedback = getPasswordFeedback('password123!');
-      expect(feedback).toContain('uppercase');
+      expect(feedback).toContain('Add uppercase letters');
     });
 
     it('should suggest adding lowercase for uppercase-only passwords', () => {
       const feedback = getPasswordFeedback('PASSWORD123!');
-      expect(feedback).toContain('lowercase');
+      expect(feedback).toContain('Add lowercase letters');
     });
 
     it('should suggest adding numbers for non-numeric passwords', () => {
       const feedback = getPasswordFeedback('Password!@#');
-      expect(feedback).toContain('number');
+      expect(feedback).toContain('Add a number');
     });
 
     it('should suggest adding special characters', () => {
       const feedback = getPasswordFeedback('Password123');
-      expect(feedback).toContain('special character');
+      expect(feedback).toContain('Add a special character');
     });
 
     it('should return empty array for strong passwords', () => {

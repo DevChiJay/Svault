@@ -6,6 +6,13 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import EmptyState from '../components/common/EmptyState';
 
+// Mock FadeInView to avoid animation timing issues in tests
+jest.mock('../components/common/FadeInView', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return ({ children, style }: any) => <View style={style}>{children}</View>;
+});
+
 describe('EmptyState Component', () => {
   it('should render with required props', () => {
     const { getByText } = render(

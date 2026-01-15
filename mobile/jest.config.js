@@ -33,4 +33,8 @@ module.exports = {
     '**/__tests__/**/*.test.{ts,tsx}',
     '**/?(*.)+(spec|test).{ts,tsx}',
   ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/e2e/',
+  ],
 };
