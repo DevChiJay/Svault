@@ -122,17 +122,9 @@ export default function VaultScreen() {
           <Text style={styles.headerTitle}>secVault</Text>
           <Text style={styles.headerSubtitle}>{user?.email}</Text>
         </View>
-        <View style={styles.headerActions}>
-          <TouchableOpacity
-            onPress={() => router.push('/(settings)')}
-            style={styles.iconButton}
-          >
-            <Ionicons name="settings-outline" size={24} color="#6b7280" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleLogout} style={styles.iconButton}>
-            <Ionicons name="log-out-outline" size={24} color="#ef4444" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={handleLogout} style={styles.iconButton}>
+          <Ionicons name="log-out-outline" size={24} color="#ef4444" />
+        </TouchableOpacity>
       </View>
 
       {/* Search Bar */}
@@ -191,14 +183,6 @@ export default function VaultScreen() {
           }
         />
       )}
-
-      {/* FAB - Add Button */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => router.push('/(main)/entry/new')}
-      >
-        <Ionicons name="add" size={28} color="#ffffff" />
-      </TouchableOpacity>
     </View>
   );
 }
