@@ -6,6 +6,7 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { API_BASE_URL, API_CONFIG } from '../../constants/config';
 import { tokenStorage } from '../storage/tokenStorage';
+import { navigationService } from '../navigation/navigationService';
 import { ApiError } from '../../types';
 
 class ApiClient {
@@ -82,7 +83,7 @@ class ApiClient {
           } catch (refreshError) {
             // Refresh failed - clear tokens and redirect to login
             await tokenStorage.clearAll();
-            // TODO: Navigate to login screen
+            navigationService.navigateToLogin();
             return Promise.reject(refreshError);
           } finally {
             this.isRefreshing = false;

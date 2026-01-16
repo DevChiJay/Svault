@@ -6,6 +6,8 @@
 import { QueryClient } from '@tanstack/react-query';
 import { APP_CONFIG } from '../constants/config';
 import { Alert } from 'react-native';
+import { tokenStorage } from '../services/storage/tokenStorage';
+import { navigationService } from '../services/navigation/navigationService';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,7 +19,7 @@ export const queryClient = new QueryClient({
       // Retry configuration
       retry: (failureCount, error: any) => {
         // Don't retry on 401 (unauthorized) or 403 (forbidden)
-        if (error?.response?.status === 401 || error?.response?.status === 403) {
+        if (error?.status === 401 || error?.status === 403) {
           return false;
         }
         return failureCount < 2;
@@ -31,6 +33,14 @@ export const queryClient = new QueryClient({
       
       // Network mode for offline support
       networkMode: 'offlineFirst',
+
+      // Global error handler for queries
+      onError: (error: any) => {
+        // Handle 401 Unauthorized - session expired
+        if (error?.status === 401) {
+          handleAuthError();
+        }
+      },
     },
     mutations: {
       // Mutation configuration
@@ -48,14 +58,36 @@ export const queryClient = new QueryClient({
       
       // Global error handler
       onError: (error: any) => {
-        // Handle network errors gracefully
-        if (!error?.response) {
+        // Handle 401 Unauthorized - session expired
+        if (error?.status === 401) {
+          handleAuthError();
+        } else if (!error?.response) {
+          // Handle network errors gracefully
           console.log('Network error - operation will retry when online');
         }
       },
     },
   },
 });
+
+/**
+ * Handle authentication errors (401 Unauthorized)
+ * Clear tokens, cache, and redirect to login
+ */
+async function handleAuthError() {
+  try {
+    // Clear all stored tokens
+    await tokenStorage.clearAll();
+    
+    // Clear all cached data
+    queryClient.clear();
+    
+    // Navigate to login screen
+    navigationService.navigateToLogin();
+  } catch (error) {
+    console.error('Error handling auth failure:', error);
+  }
+}
 
 // Query keys for consistent cache management
 export const queryKeys = {
