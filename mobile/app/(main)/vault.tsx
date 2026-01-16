@@ -3,7 +3,7 @@
  * Main screen showing all password entries with Phase 3 features
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
   StyleSheet,
   RefreshControl,
   TextInput,
+  Modal,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +22,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useDebounce } from '@/hooks/useDebounce';
 import { PasswordEntry } from '@/types';
 import { formatDate } from '@/utils/helpers';
+import { sortEntries, SortOption } from '@/utils/entryFilters';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import OfflineBanner from '@/components/common/OfflineBanner';
@@ -31,6 +33,8 @@ export default function VaultScreen() {
   const { logout, user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'website' | 'email'>('website');
+  const [sortBy, setSortBy] = useState<SortOption>('date-desc');
+  const [showSortModal, setShowSortModal] = useState(false);
   
   const debouncedSearch = useDebounce(searchQuery, 500);
   
@@ -45,8 +49,21 @@ export default function VaultScreen() {
     isSearching,
   } = useSearchEntries(searchType, debouncedSearch, 1);
 
-  const displayEntries = debouncedSearch.length > 0 ? searchResults : entries;
+  const rawEntries = debouncedSearch.length > 0 ? searchResults : entries;
+  const displayEntries = useMemo(() => sortEntries(rawEntries, sortBy), [rawEntries, sortBy]);
   const loading = debouncedSearch.length > 0 ? isSearching : isLoading;
+
+  const sortOptions = [
+    { value: 'name-asc' as SortOption, label: 'Name (A-Z)', icon: 'text-outline' as const },
+    { value: 'name-desc' as SortOption, label: 'Name (Z-A)', icon: 'text-outline' as const },
+    { value: 'date-desc' as SortOption, label: 'Newest First', icon: 'calendar-outline' as const },
+    { value: 'date-asc' as SortOption, label: 'Oldest First', icon: 'calendar-outline' as const },
+    { value: 'updated-desc' as SortOption, label: 'Recently Updated', icon: 'time-outline' as const },
+  ];
+
+  const getSortLabel = () => {
+    return sortOptions.find(opt => opt.value === sortBy)?.label || 'Sort';
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -110,9 +127,14 @@ export default function VaultScreen() {
           <Text style={styles.headerTitle}>sVault</Text>
           <Text style={styles.headerSubtitle}>{user?.email}</Text>
         </View>
-        <TouchableOpacity onPress={handleLogout} style={styles.iconButton}>
-          <Ionicons name="log-out-outline" size={24} color="#ef4444" />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={() => setShowSortModal(true)} style={styles.iconButton}>
+            <Ionicons name="swap-vertical-outline" size={24} color="#6366f1" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} style={styles.iconButton}>
+            <Ionicons name="log-out-outline" size={24} color="#ef4444" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Search Bar */}
@@ -171,6 +193,60 @@ export default function VaultScreen() {
           }
         />
       )}
+
+      {/* Sort Modal */}
+      <Modal
+        visible={showSortModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowSortModal(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowSortModal(false)}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Sort By</Text>
+              <TouchableOpacity onPress={() => setShowSortModal(false)}>
+                <Ionicons name="close" size={24} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+
+            {sortOptions.map((option) => (
+              <TouchableOpacity
+                key={option.value}
+                style={[
+                  styles.modalOption,
+                  sortBy === option.value && styles.modalOptionActive,
+                ]}
+                onPress={() => {
+                  setSortBy(option.value);
+                  setShowSortModal(false);
+                }}
+              >
+                <Ionicons
+                  name={option.icon}
+                  size={20}
+                  color={sortBy === option.value ? '#6366F1' : '#6B7280'}
+                />
+                <Text
+                  style={[
+                    styles.modalOptionText,
+                    sortBy === option.value && styles.modalOptionTextActive,
+                  ]}
+                >
+                  {option.label}
+                </Text>
+                {sortBy === option.value && (
+                  <Ionicons name="checkmark" size={20} color="#6366F1" />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -196,7 +272,7 @@ const styles = StyleSheet.create({
   },
   headerActions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 12,
   },
   iconButton: {
     padding: 8,
@@ -328,5 +404,50 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 34,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  modalOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  modalOptionActive: {
+    backgroundColor: '#F9FAFB',
+  },
+  modalOptionText: {
+    flex: 1,
+    fontSize: 15,
+    color: '#374151',
+  },
+  modalOptionTextActive: {
+    fontWeight: '600',
+    color: '#6366F1',
   },
 });
