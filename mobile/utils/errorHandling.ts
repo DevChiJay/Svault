@@ -50,12 +50,23 @@ export function getErrorMessage(error: unknown): string {
     return error.message;
   }
 
-  // Unknown error - try to stringify
-  try {
-    return typeof error === 'object' ? JSON.stringify(error) : String(error);
-  } catch {
-    return 'An unknown error occurred';
+  // Unknown error - check if it's an object with detail field
+  if (typeof error === 'object' && error !== null) {
+    // Try to extract detail field if it exists
+    if ('detail' in error) {
+      const detail = (error as any).detail;
+      if (typeof detail === 'string') {
+        return detail;
+      }
+      if (Array.isArray(detail)) {
+        return detail.map((err: any) => err.msg || String(err)).join(', ');
+      }
+    }
+    // Don't stringify - return generic message
+    return 'An error occurred. Please try again.';
   }
+
+  return String(error);
 }
 
 /**
