@@ -3,7 +3,7 @@
  * Main screen showing all password entries with Phase 3 features
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -31,13 +31,28 @@ import AnimatedCard from '@/components/common/AnimatedCard';
 
 export default function VaultScreen() {
   const router = useRouter();
-  const { logout, user } = useAuth();
+  const { logout, user, userError } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'website' | 'email'>('website');
   const [sortBy, setSortBy] = useState<SortOption>('date-desc');
   const [showSortModal, setShowSortModal] = useState(false);
   
   const debouncedSearch = useDebounce(searchQuery, 500);
+  
+  // Monitor for session expiration
+  useEffect(() => {
+    if (userError && (userError as any)?.status === 401) {
+      // Session expired - redirect to login
+      const handleExpiredSession = async () => {
+        const { tokenStorage } = await import('@/services/storage/tokenStorage');
+        const { queryClient } = await import('@/utils/queryClient');
+        await tokenStorage.clearAll();
+        queryClient.clear();
+        router.replace('/(auth)/login');
+      };
+      handleExpiredSession();
+    }
+  }, [userError, router]);
   
   const { 
     entries, 

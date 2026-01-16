@@ -79,10 +79,19 @@ class ApiClient {
               this.refreshSubscribers = [];
               
               return this.client(originalRequest);
+            } else {
+              // Token refresh returned null - session expired
+              console.log('Token refresh failed - clearing session and redirecting to login');
+              await tokenStorage.clearAll();
+              this.refreshSubscribers = [];
+              navigationService.navigateToLogin();
+              return Promise.reject(new Error('Session expired'));
             }
           } catch (refreshError) {
             // Refresh failed - clear tokens and redirect to login
+            console.log('Token refresh threw error - clearing session and redirecting to login');
             await tokenStorage.clearAll();
+            this.refreshSubscribers = [];
             navigationService.navigateToLogin();
             return Promise.reject(refreshError);
           } finally {
