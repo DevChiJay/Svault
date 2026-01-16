@@ -13,6 +13,7 @@ import {
   RefreshControl,
   TextInput,
   Modal,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -124,7 +125,14 @@ export default function VaultScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Text style={styles.headerTitle}>sVault</Text>
+          <View style={styles.titleRow}>
+            <Image 
+              source={require('@/assets/images/icon.png')} 
+              style={styles.headerIcon}
+              resizeMode="contain"
+            />
+            <Text style={styles.headerTitle}>sVault</Text>
+          </View>
           <Text style={styles.headerSubtitle}>{user?.email}</Text>
         </View>
         <View style={styles.headerActions}>
@@ -269,6 +277,15 @@ const styles = StyleSheet.create({
   },
   headerLeft: {
     flex: 1,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerIcon: {
+    width: 28,
+    height: 28,
   },
   headerActions: {
     flexDirection: 'row',

@@ -15,6 +15,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
@@ -174,7 +175,11 @@ export default function LoginScreen() {
       >
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Ionicons name="shield-checkmark" size={64} color="#6366f1" />
+            <Image 
+              source={require('@/assets/images/icon.png')} 
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
           </View>
           <Text style={styles.title}>Welcome to sVault</Text>
           <Text style={styles.subtitle}>Secure password management</Text>
@@ -308,6 +313,10 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     marginBottom: 16,
+  },
+  logoImage: {
+    width: 80,
+    height: 80,
   },
   title: {
     fontSize: 28,
